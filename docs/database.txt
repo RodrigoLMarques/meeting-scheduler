@@ -1,0 +1,62 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table events {
+  id uuid [pk]
+  title varchar(255) [not null]
+  description text
+  creator_name varchar(100)
+  date_start timestamp [not null]
+  date_end timestamp [not null]
+  timezone varchar(50) [not null, default: 'America/Sao_Paulo']
+  url_slug varchar(20) [unique, not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  
+  indexes {
+    url_slug [unique]
+    created_at
+  }
+}
+
+Table participants {
+  id uuid [pk]
+  event_id uuid [not null, ref: > events.id]
+  name varchar(100) [not null]
+  password_hash varchar(255) [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  
+  indexes {
+    event_id
+    (event_id, name) [unique]
+  }
+}
+
+Table time_slots {
+  id uuid [pk]
+  event_id uuid [not null, ref: > events.id]
+  start_time timestamp [not null]
+  end_time timestamp [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  
+  indexes {
+    event_id
+    (event_id, start_time) [unique]
+  }
+}
+
+Table availabilities {
+  participant_id uuid [not null, ref: > participants.id]
+  time_slot_id uuid [not null, ref: > time_slots.id]
+  status varchar(20) [not null, note: 'available, maybe, unavailable']
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null, default: `now()`]
+  
+  indexes {
+    (participant_id, time_slot_id) [pk]
+    participant_id
+    time_slot_id
+  }
+}
