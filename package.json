@@ -1,0 +1,39 @@
+{
+  "name": "meeting-schedule",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "migrate:dev": "dotenv -e .env.example -- npx prisma migrate dev",
+    "migrate:create": "dotenv -e .env.example -- npx prisma migrate dev --create-only",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RodrigoLMarques/meeting-scheduler.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RodrigoLMarques/meeting-scheduler/issues"
+  },
+  "homepage": "https://github.com/RodrigoLMarques/meeting-scheduler#readme",
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.0",
+    "dotenv-cli": "^11.0.0",
+    "prisma": "^6.19.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
