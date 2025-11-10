@@ -1,7 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma Scheme Atualizado por Nicolas
+// Verificar se está tudo correto
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+//Tentei seguir a forma como está no pdf do esquema do banco de dados :)
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
@@ -14,12 +14,59 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Event {
+  id String @id @default(uuid())
+  title String @db.VarChar(255)
+  description String?
+  creator_name String @db.VarChar(100)
+  date_start DateTime
+  date_end DateTime
+  timezone String @db.VarChar(50)
+  url_slug String @db.VarChar(20)
+  created_at DateTime
+  updated_at DateTime
 
-  @@map("users")
+  // Relacionamentos
+  participants Participant[]
+  time_slots TimeSlot[]
+}
+
+model Participant {
+  id String @id @default(uuid())
+  event_id String
+  name String @db.VarChar(100)
+  password_hash String @db.VarChar(255)
+  created_at DateTime
+  updated_at DateTime
+
+  // Relacionamentos
+  event Event @relation(fields: [event_id], references: [id])
+  availabilities Availability[]
+}
+
+model TimeSlot {
+  id String @id @default(uuid())
+  event_id String
+  start_time DateTime
+  end_time DateTime
+  created_at DateTime
+  updated_at DateTime
+
+  // Relacionamentos
+  event Event @relation(fields: [event_id], references: [id])
+  availabilities Availability[]
+}
+
+model Availability {
+  participant_id String
+  time_slot_id String
+  status String @db.VarChar(20)
+  created_at DateTime
+  updated_at DateTime
+
+  // Relacionamentos
+  participant Participant @relation(fields: [participant_id], references: [id])
+  time_slot TimeSlot @relation(fields: [time_slot_id], references: [id])
+
+  @@id([participant_id, time_slot_id]) // Chave composta
 }
