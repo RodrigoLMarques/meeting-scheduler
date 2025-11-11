@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "migrate:dev": "dotenv -e .env.example -- npx prisma migrate dev",
-    "migrate:create": "dotenv -e .env.example -- npx prisma migrate dev --create-only",
+    "migrate:dev": "npx prisma migrate dev",
+    "migrate:create": "npx prisma migrate dev --create-only",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
