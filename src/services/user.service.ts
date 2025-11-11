@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../entities/user";
+import { ConflictError } from "../exceptions/appError";
 import { UserRepository } from "../repositories/user.repository";
-import { BadRequestError, ConflictError } from "../exceptions/appError";
 
 export interface ICreateUserDTO {
   name: string;
@@ -21,14 +21,7 @@ class UserService {
   }
 
   async create(data: ICreateUserDTO): Promise<User> {
-    try {
-      User.validate(data.name, data.password);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestError(error.message);
-      }
-      throw error;
-    }
+    User.validate(data.name, data.password);
 
     const existingUser = await this.userRepository.findByName(data.name);
 
