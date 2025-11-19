@@ -25,15 +25,6 @@ export class User {
     return this._password;
   }
 
-  static validate(name: string, password: string): void {
-    if (!name || name.trim().length === 0) {
-      throw new Error("Nome não pode ser vazio");
-    }
-    if (!password || password.length < 6) {
-      throw new Error("Senha deve ter no mínimo 6 caracteres");
-    }
-  }
-
   toJSON() {
     return {
       id: this._id,

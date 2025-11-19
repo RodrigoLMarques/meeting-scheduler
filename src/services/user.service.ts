@@ -21,7 +21,14 @@ class UserService {
   }
 
   async create(data: ICreateUserDTO): Promise<User> {
-    User.validate(data.name, data.password);
+    const { name, password } = data;
+
+    if (!name || name.trim().length === 0) {
+      throw new Error("Nome não pode ser vazio");
+    }
+    if (!password || password.length < 6) {
+      throw new Error("Senha deve ter no mínimo 6 caracteres");
+    }
 
     const existingUser = await this.userRepository.findByName(data.name);
 
