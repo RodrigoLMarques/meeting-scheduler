@@ -4,8 +4,8 @@ export class Event {
     public readonly id: string;
     public title: string;
     public description: string;
-    public dateStart: Date;
-    public dateEnd: Date;
+    public date_start: Date;
+    public date_end: Date;
     public time_earliest: string;
     public time_latest: string;
     public timezone: string;
@@ -13,8 +13,8 @@ export class Event {
 
     constructor(
         title: string,
-        dateStart: Date,
-        dateEnd: Date,
+        date_start: Date = new Date(),
+        date_end: Date,
         description: string,
         time_earliest: string = "08:00",
         time_latest: string = "18:00",
@@ -26,15 +26,15 @@ export class Event {
         }
 
         // ===== Validação das datas =====
-        if (!(dateStart instanceof Date) || isNaN(dateStart.getTime())) {
+        if (!(date_start instanceof Date) || isNaN(date_start.getTime())) {
             throw new Error("dateStart inválido.");
         }
 
-        if (!(dateEnd instanceof Date) || isNaN(dateEnd.getTime())) {
+        if (!(date_end instanceof Date) || isNaN(date_end.getTime())) {
             throw new Error("dateEnd inválido.");
         }
 
-        if (dateEnd <= dateStart) {
+        if (date_end <= date_start) {
             throw new Error("dateEnd deve ser posterior a dateStart.");
         }
 
@@ -49,17 +49,14 @@ export class Event {
             throw new Error("time_latest deve estar no formato HH:mm");
         }
 
-        // ===== Atribuições =====
         this.id = randomUUID();
         this.title = title;
         this.description = description;
-        this.dateStart = dateStart;
-        this.dateEnd = dateEnd;
+        this.date_start = date_start;
+        this.date_end = date_end;
         this.time_earliest = time_earliest;
         this.time_latest = time_latest;
         this.timezone = timezone;
-
-        // ===== Criar slug =====
         this.url_slug = this.createSlug(title);
     }
 
@@ -72,4 +69,17 @@ export class Event {
             .replace(/[^a-z0-9\s-]/g, "")    // remove chars especiais
             .replace(/\s+/g, "-");           // troca espaço por "-"
     }
+  toJSON() {
+    return {
+    id: this.id,
+    title: this.title,
+    description: this.description,
+    date_start: this.date_start,
+    date_end: this.date_end,
+    time_earliest: this.time_earliest,
+    time_latest: this.time_latest,
+    timezone: this.timezone,
+    url_slug: this.timezone
+    };    
+}
 }
