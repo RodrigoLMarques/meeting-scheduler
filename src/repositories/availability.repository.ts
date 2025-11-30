@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Availability } from "../entities/availability";
+import { Availability, AvailabilityStatus } from "../entities/availability";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,11 @@ export class AvailabilityRepository {
 
     return availabilities.map(
       (data) =>
-        new Availability(data.participant_id, data.time_slot_id, data.status)
+        new Availability(
+          data.participant_id,
+          data.time_slot_id,
+          data.status as AvailabilityStatus
+        )
     );
   }
 
@@ -22,7 +26,11 @@ export class AvailabilityRepository {
 
     return availabilities.map(
       (data) =>
-        new Availability(data.participant_id, data.time_slot_id, data.status)
+        new Availability(
+          data.participant_id,
+          data.time_slot_id,
+          data.status as AvailabilityStatus
+        )
     );
   }
 
@@ -46,7 +54,7 @@ export class AvailabilityRepository {
     return new Availability(
       availability.participant_id,
       availability.time_slot_id,
-      availability.status
+      availability.status as AvailabilityStatus
     );
   }
 

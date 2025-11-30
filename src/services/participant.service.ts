@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Participant } from "../entities/participant";
+import { Participant, ParticipantRole } from "../entities/participant";
 import {
   ConflictError,
   NotFoundError,
@@ -8,18 +8,19 @@ import {
 } from "../exceptions/appError";
 import { ParticipantRepository } from "../repositories/participant.repository";
 import { EventRepository } from "../repositories/event.repository";
+import { JwtPayload } from "../middlewares/auth.middleware";
 
 export interface ICreateParticipantDTO {
   event_id: string;
   name: string;
   password: string;
-  role?: string;
+  role?: ParticipantRole;
 }
 
 export interface IUpdateParticipantDTO {
   name?: string;
   password?: string;
-  role?: string;
+  role?: ParticipantRole;
 }
 
 export interface ILoginParticipantDTO {
@@ -29,12 +30,7 @@ export interface ILoginParticipantDTO {
 }
 
 export interface ILoginResponse {
-  participant: {
-    id: string;
-    event_id: string;
-    name: string;
-    role: string;
-  };
+  participant: JwtPayload;
   token: string;
 }
 
@@ -118,26 +114,20 @@ class ParticipantService {
     }
 
     const jwtSecret = process.env.JWT_SECRET || "default-secret-key";
-    const token = jwt.sign(
-      {
-        id: participant.id,
-        event_id: participant.event_id,
-        name: participant.name,
-        role: participant.role,
-      },
-      jwtSecret,
-      {
-        expiresIn: "7d",
-      },
-    );
+
+    const payload: JwtPayload = {
+      id: participant.id,
+      event_id: participant.event_id,
+      name: participant.name,
+      role: participant.role,
+    };
+
+    const token = jwt.sign(payload, jwtSecret, {
+      expiresIn: "7d",
+    });
 
     return {
-      participant: {
-        id: participant.id,
-        event_id: participant.event_id,
-        name: participant.name,
-        role: participant.role,
-      },
+      participant: payload,
       token,
     };
   }
@@ -180,11 +170,23 @@ class ParticipantService {
     return participant;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, authenticatedParticipant?: JwtPayload): Promise<void> {
     const participant = await this.participantRepository.findById(id);
 
     if (!participant) {
       throw new NotFoundError("Participante não encontrado");
+    }
+
+    if (authenticatedParticipant) {
+      const isOwnAccount = authenticatedParticipant.id === id;
+      const isSameEvent = authenticatedParticipant.event_id === participant.event_id;
+      const isEventCreator = authenticatedParticipant.role === ParticipantRole.ORGANIZER && isSameEvent;
+
+      if (!isOwnAccount && !isEventCreator) {
+        throw new UnauthorizedError(
+          "Você não tem permissão para deletar este participante"
+        );
+      }
     }
 
     await this.participantRepository.delete(id);

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Participant } from "../entities/participant";
+import { Participant, ParticipantRole } from "../entities/participant";
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ export class ParticipantRepository {
       participant.event_id,
       participant.name,
       participant.password,
-      participant.role,
+      participant.role as ParticipantRole
     );
   }
 
@@ -34,14 +34,14 @@ export class ParticipantRepository {
           data.event_id,
           data.name,
           data.password,
-          data.role,
-        ),
+          data.role as ParticipantRole
+        )
     );
   }
 
   async findByEventAndName(
     event_id: string,
-    name: string,
+    name: string
   ): Promise<Participant | null> {
     const participant = await prisma.participant.findUnique({
       where: {
@@ -61,7 +61,7 @@ export class ParticipantRepository {
       participant.event_id,
       participant.name,
       participant.password,
-      participant.role,
+      participant.role as ParticipantRole
     );
   }
 

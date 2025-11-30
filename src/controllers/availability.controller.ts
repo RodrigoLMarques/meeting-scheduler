@@ -30,9 +30,10 @@ class AvailabilityController {
 
   async setAvailabilities(req: Request, res: Response, next: NextFunction) {
     try {
-      const availabilities = await availabilityService.setAvailabilities(
-        req.body
-      );
+      const availabilities = await availabilityService.setAvailabilities({
+        ...req.body,
+        participant: req.participant,
+      });
       return res.status(200).json({
         message: `${availabilities.length} disponibilidades definidas com sucesso`,
         count: availabilities.length,
@@ -40,15 +41,6 @@ class AvailabilityController {
           availability.toJSON()
         ),
       });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async deleteByParticipantId(req: Request, res: Response, next: NextFunction) {
-    try {
-      await availabilityService.deleteByParticipantId(req.params.participantId);
-      return res.status(204).send();
     } catch (error) {
       next(error);
     }

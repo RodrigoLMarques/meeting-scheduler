@@ -1,11 +1,13 @@
 import { Availability, AvailabilityStatus } from "../entities/availability";
-import { NotFoundError } from "../exceptions/appError";
+import { NotFoundError, UnauthorizedError } from "../exceptions/appError";
+import { JwtPayload } from "../middlewares/auth.middleware";
 import { AvailabilityRepository } from "../repositories/availability.repository";
 import { ParticipantRepository } from "../repositories/participant.repository";
 import { TimeSlotRepository } from "../repositories/timeSlot.repository";
 
 export interface ISetAvailabilitiesDTO {
   participant_id: string;
+  authenticatedParticipant: JwtPayload;
   availabilities: Array<{
     time_slot_id: string;
     status: AvailabilityStatus;
@@ -39,6 +41,12 @@ class AvailabilityService {
   async setAvailabilities(
     data: ISetAvailabilitiesDTO
   ): Promise<Availability[]> {
+    if (data.authenticatedParticipant.id !== data.participant_id) {
+      throw new UnauthorizedError(
+        "Você não tem permissão para alterar a disponibilidade de outro participante"
+      );
+    }
+
     const participant = await this.participantRepository.findById(
       data.participant_id
     );
@@ -71,20 +79,6 @@ class AvailabilityService {
     }
 
     return availabilities;
-  }
-
-  async deleteByParticipantId(participant_id: string): Promise<void> {
-    // Validar participante (1 query)
-    const participant = await this.participantRepository.findById(
-      participant_id
-    );
-
-    if (!participant) {
-      throw new NotFoundError("Participante não encontrado");
-    }
-
-    // Deletar todas as disponibilidades de uma vez (1 query)
-    await this.availabilityRepository.deleteByParticipantId(participant_id);
   }
 }
 

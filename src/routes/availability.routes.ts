@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { availabilityController } from "../controllers/availability.controller";
+import { authenticateToken } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -8,10 +9,10 @@ router.get(
   availabilityController.getByParticipantId
 );
 router.get("/timeslot/:timeSlotId", availabilityController.getByTimeSlotId);
-router.post("/set", availabilityController.setAvailabilities);
-router.delete(
-  "/participant/:participantId",
-  availabilityController.deleteByParticipantId
+router.post(
+  "/set",
+  authenticateToken,
+  availabilityController.setAvailabilities
 );
 
 export const availabilitiesRoutes = router;

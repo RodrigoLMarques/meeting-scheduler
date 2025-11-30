@@ -1,16 +1,21 @@
+export enum ParticipantRole {
+  ORGANIZER = 'organizer',
+  PARTICIPANT = 'participant'
+}
+
 export class Participant {
   private _id: string;
   private _event_id: string;
   private _name: string;
   private _password: string;
-  private _role: string;
+  private _role!: ParticipantRole;
 
   constructor(
     id: string,
     event_id: string,
     name: string,
     password: string,
-    role: string = "participant",
+    role: ParticipantRole = ParticipantRole.PARTICIPANT,
   ) {
     if (!name || name.trim().length === 0) {
       throw new Error("Nome não pode ser vazio");
@@ -28,7 +33,7 @@ export class Participant {
     this._event_id = event_id;
     this._name = name;
     this._password = password;
-    this._role = role;
+    this.role = role;
   }
 
   get id(): string {
@@ -47,7 +52,7 @@ export class Participant {
     return this._password;
   }
 
-  get role(): string {
+  get role(): ParticipantRole {
     return this._role;
   }
 
@@ -65,7 +70,13 @@ export class Participant {
     this._password = value;
   }
 
-  set role(value: string) {
+  set role(value: ParticipantRole) {
+    const validRoles = Object.values(ParticipantRole);
+    if (!validRoles.includes(value)) {
+      throw new Error(
+        `Role inválida. Valores permitidos: ${validRoles.join(', ')}`
+      );
+    }
     this._role = value;
   }
 

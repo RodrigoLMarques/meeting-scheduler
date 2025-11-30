@@ -1,7 +1,8 @@
+import { Event } from "../entities/event";
 import { TimeSlot } from "../entities/timeSlot";
-import { ConflictError, NotFoundError } from "../exceptions/appError";
-import { TimeSlotRepository } from "../repositories/timeSlot.repository";
+import { NotFoundError } from "../exceptions/appError";
 import { EventRepository } from "../repositories/event.repository";
+import { TimeSlotRepository } from "../repositories/timeSlot.repository";
 
 export interface ICreateTimeSlotDTO {
   event_id: string;
@@ -16,11 +17,9 @@ export interface IUpdateTimeSlotDTO {
 
 class TimeSlotService {
   private timeSlotRepository: TimeSlotRepository;
-  private eventRepository: EventRepository;
 
   constructor() {
     this.timeSlotRepository = new TimeSlotRepository();
-    this.eventRepository = new EventRepository();
   }
 
   async getById(id: string): Promise<TimeSlot> {
@@ -38,92 +37,50 @@ class TimeSlotService {
     return timeSlots;
   }
 
-  async create(data: ICreateTimeSlotDTO): Promise<TimeSlot> {
-    const event = await this.eventRepository.findById(data.event_id);
+  async generateTimeSlotsForEvent(event: Event): Promise<TimeSlot[]> {
+    const timeSlots: TimeSlot[] = [];
+    const SLOT_DURATION_MINUTES = 30;
 
-    if (!event) {
-      throw new NotFoundError("Evento não encontrado");
-    }
+    const [earliestHour, earliestMinute] = event.time_earliest
+      .split(":")
+      .map(Number);
+    const [latestHour, latestMinute] = event.time_latest.split(":").map(Number);
 
-    // Converter strings para Date se necessário
-    const startTime = typeof data.start_time === 'string'
-      ? new Date(data.start_time)
-      : data.start_time;
+    const currentDate = new Date(event.date_start);
+    const endDate = new Date(event.date_end);
 
-    const endTime = typeof data.end_time === 'string'
-      ? new Date(data.end_time)
-      : data.end_time;
+    while (currentDate <= endDate) {
+      const startTime = new Date(currentDate);
+      startTime.setHours(earliestHour, earliestMinute, 0, 0);
 
-    const existingTimeSlot =
-      await this.timeSlotRepository.findByEventAndStartTime(
-        data.event_id,
-        startTime,
-      );
+      const endTime = new Date(currentDate);
+      endTime.setHours(latestHour, latestMinute, 0, 0);
 
-    if (existingTimeSlot) {
-      throw new ConflictError(
-        "Já existe um slot de tempo com este horário de início neste evento",
-      );
-    }
+      let slotStart = new Date(startTime);
 
-    const timeSlot = new TimeSlot(
-      crypto.randomUUID(),
-      data.event_id,
-      startTime,
-      endTime,
-    );
+      while (slotStart < endTime) {
+        const slotEnd = new Date(slotStart);
+        slotEnd.setMinutes(slotEnd.getMinutes() + SLOT_DURATION_MINUTES);
 
-    await this.timeSlotRepository.create(timeSlot);
+        if (slotEnd <= endTime) {
+          const timeSlot = new TimeSlot(
+            crypto.randomUUID(),
+            event.id,
+            new Date(slotStart),
+            new Date(slotEnd),
+          );
 
-    return timeSlot;
-  }
+          await this.timeSlotRepository.create(timeSlot);
+          timeSlots.push(timeSlot);
+        }
 
-  async update(id: string, data: IUpdateTimeSlotDTO): Promise<TimeSlot> {
-    const timeSlot = await this.timeSlotRepository.findById(id);
-
-    if (!timeSlot) {
-      throw new NotFoundError("Slot de tempo não encontrado");
-    }
-
-    if (data.start_time !== undefined) {
-      const startTime = typeof data.start_time === 'string'
-        ? new Date(data.start_time)
-        : data.start_time;
-
-      const existingTimeSlot =
-        await this.timeSlotRepository.findByEventAndStartTime(
-          timeSlot.event_id,
-          startTime,
-        );
-
-      if (existingTimeSlot && existingTimeSlot.id !== id) {
-        throw new ConflictError(
-          "Já existe um slot de tempo com este horário de início neste evento",
-        );
+        slotStart = slotEnd;
       }
 
-      timeSlot.start_time = startTime;
+      currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    if (data.end_time !== undefined) {
-      timeSlot.end_time = typeof data.end_time === 'string'
-        ? new Date(data.end_time)
-        : data.end_time;
-    }
-
-    await this.timeSlotRepository.update(timeSlot);
-
-    return timeSlot;
-  }
-
-  async delete(id: string): Promise<void> {
-    const timeSlot = await this.timeSlotRepository.findById(id);
-
-    if (!timeSlot) {
-      throw new NotFoundError("Slot de tempo não encontrado");
-    }
-
-    await this.timeSlotRepository.delete(id);
+    return timeSlots;
   }
 }
 

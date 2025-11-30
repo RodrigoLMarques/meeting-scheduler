@@ -14,7 +14,7 @@ class ParticipantController {
   async getByEventId(req: Request, res: Response, next: NextFunction) {
     try {
       const participants = await participantService.getByEventId(
-        req.params.eventId,
+        req.params.eventId
       );
       return res
         .status(200)
@@ -42,21 +42,9 @@ class ParticipantController {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
-      const participant = await participantService.update(
-        req.params.id,
-        req.body,
-      );
-      return res.status(200).json(participant.toJSON());
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await participantService.delete(req.params.id);
+      await participantService.delete(req.params.id, req.participant);
       return res.status(204).send();
     } catch (error) {
       next(error);
