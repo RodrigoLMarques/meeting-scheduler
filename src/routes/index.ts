@@ -1,8 +1,14 @@
-import { Router } from 'express';
-import { userRoutes } from './user.routes';
+import { Router } from "express";
+import { availabilitiesRoutes } from "./availability.routes";
+import { eventsRoutes } from "./event.routes";
+import { participantsRoutes } from "./participant.routes";
+import { timeSlotsRoutes } from "./timeSlot.routes";
 
 const router = Router();
 
-router.use('/users', userRoutes);
+router.use("/events", eventsRoutes);
+router.use("/participants", participantsRoutes);
+router.use("/timeslots", timeSlotsRoutes);
+router.use("/availabilities", availabilitiesRoutes);
 
 export const routes = router;

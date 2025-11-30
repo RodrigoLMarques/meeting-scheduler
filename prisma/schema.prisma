@@ -6,7 +6,7 @@ generator client {
 datasource db {
   // provider = "postgresql"
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  // url      = env("DATABASE_URL")
 }
 
 model Event {
@@ -65,9 +65,9 @@ model TimeSlot {
 model Availability {
   participant_id String
   time_slot_id   String
-  status         String
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  status         AvailabilityStatus
+  created_at     DateTime           @default(now())
+  updated_at     DateTime           @updatedAt
 
   participant Participant @relation(fields: [participant_id], references: [id], onDelete: Cascade)
   time_slot   TimeSlot    @relation(fields: [time_slot_id], references: [id], onDelete: Cascade)
@@ -76,4 +76,10 @@ model Availability {
   @@index([participant_id])
   @@index([time_slot_id])
   @@map("availabilities")
+}
+
+enum AvailabilityStatus {
+  available
+  maybe
+  unavailable
 }

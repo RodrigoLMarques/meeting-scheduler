@@ -23,13 +23,16 @@
   },
   "homepage": "https://github.com/RodrigoLMarques/meeting-scheduler#readme",
   "dependencies": {
+    "@paralleldrive/cuid2": "^3.0.4",
     "@prisma/client": "^6.19.0",
     "bcrypt": "^6.0.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.0",
     "dotenv-cli": "^11.0.0",
     "prisma": "^6.19.0",

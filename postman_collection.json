@@ -1,0 +1,489 @@
+{
+  "info": {
+    "name": "Meeting Schedule API",
+    "description": "API inspirada no When2Meet para agendamento de reuniões",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "event_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "participant_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "time_slot_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "List all events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/events",
+              "host": ["{{BASE_URL}}"],
+              "path": ["events"]
+            }
+          }
+        },
+        {
+          "name": "Get event by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/events/{{event_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["events", "{{event_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get event by slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/events/slug/reuniao-da-equipe",
+              "host": ["{{BASE_URL}}"],
+              "path": ["events", "slug", "reuniao-da-equipe"]
+            }
+          }
+        },
+        {
+          "name": "Create event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('event_id', response.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Reunião da Equipe\",\n  \"description\": \"Planejamento Q1\",\n  \"date_start\": \"2025-01-20T00:00:00Z\",\n  \"date_end\": \"2025-01-22T00:00:00Z\",\n  \"time_earliest\": \"09:00\",\n  \"time_latest\": \"17:00\",\n  \"timezone\": \"America/Sao_Paulo\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/events",
+              "host": ["{{BASE_URL}}"],
+              "path": ["events"]
+            }
+          }
+        },
+        {
+          "name": "Update event",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Reunião Atualizada\",\n  \"description\": \"Nova descrição\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/events/{{event_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["events", "{{event_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete event",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/events/{{event_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["events", "{{event_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Participants",
+      "item": [
+        {
+          "name": "List all participants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/participants",
+              "host": ["{{BASE_URL}}"],
+              "path": ["participants"]
+            }
+          }
+        },
+        {
+          "name": "Get participant by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/participants/{{participant_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["participants", "{{participant_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get participants by event",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/participants/event/{{event_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["participants", "event", "{{event_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create participant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('participant_id', response.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_id\": \"{{event_id}}\",\n  \"name\": \"João Silva\",\n  \"password\": \"senha123\",\n  \"role\": \"participant\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/participants",
+              "host": ["{{BASE_URL}}"],
+              "path": ["participants"]
+            }
+          }
+        },
+        {
+          "name": "Login participant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('TOKEN', response.token);",
+                  "    pm.collectionVariables.set('participant_id', response.participant.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_id\": \"{{event_id}}\",\n  \"name\": \"João Silva\",\n  \"password\": \"senha123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/participants/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["participants", "login"]
+            }
+          }
+        },
+        {
+          "name": "Update participant",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva Jr.\",\n  \"password\": \"novasenha123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/participants/{{participant_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["participants", "{{participant_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete participant",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/participants/{{participant_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["participants", "{{participant_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Time Slots",
+      "item": [
+        {
+          "name": "List all time slots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/timeslots",
+              "host": ["{{BASE_URL}}"],
+              "path": ["timeslots"]
+            }
+          }
+        },
+        {
+          "name": "Get time slot by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/timeslots/{{time_slot_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["timeslots", "{{time_slot_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get time slots by event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.length > 0) {",
+                  "        pm.collectionVariables.set('time_slot_id', response[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/timeslots/event/{{event_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["timeslots", "event", "{{event_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create time slot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_id\": \"{{event_id}}\",\n  \"start_time\": \"2025-01-20T09:00:00Z\",\n  \"end_time\": \"2025-01-20T09:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/timeslots",
+              "host": ["{{BASE_URL}}"],
+              "path": ["timeslots"]
+            }
+          }
+        },
+        {
+          "name": "Update time slot",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"start_time\": \"2025-01-20T10:00:00Z\",\n  \"end_time\": \"2025-01-20T10:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/timeslots/{{time_slot_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["timeslots", "{{time_slot_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete time slot",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/timeslots/{{time_slot_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["timeslots", "{{time_slot_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Availabilities",
+      "item": [
+        {
+          "name": "List all availabilities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/availabilities",
+              "host": ["{{BASE_URL}}"],
+              "path": ["availabilities"]
+            }
+          }
+        },
+        {
+          "name": "Get availabilities by participant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/availabilities/participant/{{participant_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["availabilities", "participant", "{{participant_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get availabilities by time slot",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/availabilities/timeslot/{{time_slot_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["availabilities", "timeslot", "{{time_slot_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Set availabilities (bulk)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"participant_id\": \"{{participant_id}}\",\n  \"availabilities\": [\n    {\n      \"time_slot_id\": \"{{time_slot_id}}\",\n      \"status\": \"available\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/availabilities/set",
+              "host": ["{{BASE_URL}}"],
+              "path": ["availabilities", "set"]
+            }
+          }
+        },
+        {
+          "name": "Delete all availabilities of participant",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/availabilities/participant/{{participant_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["availabilities", "participant", "{{participant_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
