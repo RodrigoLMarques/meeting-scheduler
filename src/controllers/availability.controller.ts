@@ -32,7 +32,7 @@ class AvailabilityController {
     try {
       const availabilities = await availabilityService.setAvailabilities({
         ...req.body,
-        participant: req.participant,
+        authenticatedParticipant: req.participant,
       });
       return res.status(200).json({
         message: `${availabilities.length} disponibilidades definidas com sucesso`,
