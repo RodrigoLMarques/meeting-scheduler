@@ -1,12 +1,12 @@
 export class Event {
   private _id: string;
   private _title!: string;
-  private _description: string;
-  private _date_start: Date;
-  private _date_end: Date;
+  private _description!: string;
+  private _date_start!: Date;
+  private _date_end!: Date;
   private _time_earliest!: string;
   private _time_latest!: string;
-  private _timezone: string;
+  private _timezone!: string;
   private _url_slug!: string;
 
   constructor(
@@ -21,12 +21,10 @@ export class Event {
     url_slug?: string
   ) {
     this._id = id;
-    this._description = description;
-    this._timezone = timezone;
-
-    this._date_start = date_start;
-    this._date_end = date_end;
-
+    this.description = description;
+    this.timezone = timezone;
+    this.date_start = date_start;
+    this.date_end = date_end;
     this.title = title;
     this.date_start = date_start;
     this.date_end = date_end;

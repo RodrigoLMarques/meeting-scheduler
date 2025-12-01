@@ -1,35 +1,18 @@
 export class TimeSlot {
   private _id: string;
   private _event_id: string;
-  private _start_time: Date;
-  private _end_time: Date;
+  private _start_time!: Date;
+  private _end_time!: Date;
 
-  constructor(
-    id: string,
-    event_id: string,
-    start_time: Date,
-    end_time: Date,
-  ) {
+  constructor(id: string, event_id: string, start_time: Date, end_time: Date) {
     if (!event_id) {
       throw new Error("ID do evento é obrigatório");
     }
 
-    if (!(start_time instanceof Date) || isNaN(start_time.getTime())) {
-      throw new Error("start_time inválido");
-    }
-
-    if (!(end_time instanceof Date) || isNaN(end_time.getTime())) {
-      throw new Error("end_time inválido");
-    }
-
-    if (end_time <= start_time) {
-      throw new Error("end_time deve ser posterior a start_time");
-    }
-
     this._id = id;
     this._event_id = event_id;
-    this._start_time = start_time;
-    this._end_time = end_time;
+    this.start_time = start_time;
+    this.end_time = end_time;
   }
 
   get id(): string {

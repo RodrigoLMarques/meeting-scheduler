@@ -1,13 +1,13 @@
 export enum ParticipantRole {
-  ORGANIZER = 'organizer',
-  PARTICIPANT = 'participant'
+  ORGANIZER = "organizer",
+  PARTICIPANT = "participant",
 }
 
 export class Participant {
   private _id: string;
   private _event_id: string;
-  private _name: string;
-  private _password: string;
+  private _name!: string;
+  private _password!: string;
   private _role!: ParticipantRole;
 
   constructor(
@@ -15,24 +15,12 @@ export class Participant {
     event_id: string,
     name: string,
     password: string,
-    role: ParticipantRole = ParticipantRole.PARTICIPANT,
+    role: ParticipantRole
   ) {
-    if (!name || name.trim().length === 0) {
-      throw new Error("Nome não pode ser vazio");
-    }
-
-    if (!password || password.length < 6) {
-      throw new Error("Senha deve ter no mínimo 6 caracteres");
-    }
-
-    if (!event_id) {
-      throw new Error("ID do evento é obrigatório");
-    }
-
     this._id = id;
     this._event_id = event_id;
-    this._name = name;
-    this._password = password;
+    this.name = name;
+    this.password = password;
     this.role = role;
   }
 
@@ -74,10 +62,10 @@ export class Participant {
     const validRoles = Object.values(ParticipantRole);
     if (!validRoles.includes(value)) {
       throw new Error(
-        `Role inválida. Valores permitidos: ${validRoles.join(', ')}`
+        `Role inválida. Valores permitidos: ${validRoles.join(", ")}`
       );
     }
-    this._role = value;
+    this._role = value || ParticipantRole.PARTICIPANT;
   }
 
   toJSON() {

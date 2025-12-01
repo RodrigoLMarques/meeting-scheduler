@@ -1,7 +1,7 @@
 export enum AvailabilityStatus {
-  AVAILABLE = 'available',
-  MAYBE = 'maybe',
-  UNAVAILABLE = 'unavailable'
+  AVAILABLE = "available",
+  MAYBE = "maybe",
+  UNAVAILABLE = "unavailable",
 }
 
 export class Availability {
@@ -9,15 +9,11 @@ export class Availability {
   private _time_slot_id: string;
   private _status!: AvailabilityStatus;
 
-  constructor(participant_id: string, time_slot_id: string, status: AvailabilityStatus) {
-    if (!participant_id) {
-      throw new Error("ID do participante é obrigatório");
-    }
-
-    if (!time_slot_id) {
-      throw new Error("ID do slot de tempo é obrigatório");
-    }
-
+  constructor(
+    participant_id: string,
+    time_slot_id: string,
+    status: AvailabilityStatus
+  ) {
     this._participant_id = participant_id;
     this._time_slot_id = time_slot_id;
     this.status = status;
@@ -43,7 +39,7 @@ export class Availability {
     const validStatuses = Object.values(AvailabilityStatus);
     if (!validStatuses.includes(value)) {
       throw new Error(
-        `Status inválido. Valores permitidos: ${validStatuses.join(', ')}`
+        `Status inválido. Valores permitidos: ${validStatuses.join(", ")}`
       );
     }
 
