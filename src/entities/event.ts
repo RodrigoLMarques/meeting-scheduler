@@ -38,7 +38,7 @@ export class Event {
     }
   }
 
-  private createSlug(text: string): string {
+  private generateSlug(text: string): string {
     return text
       .toLowerCase()
       .trim()
@@ -89,7 +89,7 @@ export class Event {
       throw new Error("O título deve ter pelo menos 3 caracteres.");
     }
     this._title = value;
-    this._url_slug = this.createSlug(value);
+    this._url_slug = this.generateSlug(value);
   }
 
   set description(value: string) {
